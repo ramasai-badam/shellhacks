@@ -102,7 +102,7 @@ with st.sidebar.form("input"):
     if transcribe:
         if audio_file is not None:
             # print(temp_audio_path)
-            Transcribe(temp_file.name)
+            Transcribe(temp_audio_path)
 
 
 
