@@ -101,8 +101,8 @@ with st.sidebar.form("input"):
     transcribe = st.form_submit_button(label="Transcribe")
     if transcribe:
         if audio_file is not None:
-            print(temp_audio_path)
-            Transcribe(temp_audio_path)
+            # print(temp_audio_path)
+            Transcribe(temp_file.name)
 
 
 
