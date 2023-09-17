@@ -12,8 +12,6 @@ st.set_page_config(
 aai.settings.api_key = f"5df2facc7d27404fbe5d820b2c766ed4"
 
 config1 = aai.TranscriptionConfig(speaker_labels=True,)
-config2 = aai.TranscriptionConfig(summarization=True,
-                                  summary_type=aai.SummarizationType.gist)
 config3 = aai.TranscriptionConfig(sentiment_analysis=True)
 transcriber = aai.Transcriber()
 
@@ -55,13 +53,6 @@ if submit_button and audio_file:
     #     print(type(utterance))
         text += f"Speaker {utterance.speaker}: {utterance.text}\n"
     stx.scrollableTextbox(text, height=500)
-    time.sleep(10)
-    transcript = transcriber.transcribe(
-    audio_file_path,
-    config=config2
-    )
-    st.header("Summary")
-    st.write(transcript.summary)
     transcript = transcriber.transcribe(
     audio_file_path,
     config=config3
