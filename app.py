@@ -6,12 +6,12 @@ import os
 import cohere
 
 st.set_page_config(
-    page_title="Post Call Analytics",
+    page_title="Post Call Analysis",
     layout="wide",
 )
-aai.settings.api_key = f"5df2facc7d27404fbe5d820b2c766ed4"
+aai.settings.api_key = st.secrets["AAI_KEY"]
 
-co = cohere.Client("LrWGEBLZDgSiuBv1BhNk8cNxqc4z6tbzjLp4Wrkd")
+co = cohere.Client(st.secrets["CO_KEY"])
 
 config1 = aai.TranscriptionConfig(speaker_labels=True,)
 config3 = aai.TranscriptionConfig(sentiment_analysis=True)
