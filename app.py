@@ -78,5 +78,4 @@ if submit_button and audio_file:
     elif satisfaction < 0 :
         st.error("The customer is not satisfied 😞")
         st.download_button('download transcript', text)
-        st.download_button('download summary', summary.summary)
     temp_audio_file.close()
