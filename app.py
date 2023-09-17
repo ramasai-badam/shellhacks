@@ -3,7 +3,7 @@ import streamlit as st
 import streamlit_scrollable_textbox as stx
 import tempfile
 import os
-import time
+import cohere
 
 st.set_page_config(
     page_title="Post Call Analytics",
@@ -11,9 +11,13 @@ st.set_page_config(
 )
 aai.settings.api_key = f"5df2facc7d27404fbe5d820b2c766ed4"
 
+co = cohere.Client("LrWGEBLZDgSiuBv1BhNk8cNxqc4z6tbzjLp4Wrkd")
+
 config1 = aai.TranscriptionConfig(speaker_labels=True,)
 config3 = aai.TranscriptionConfig(sentiment_analysis=True)
 transcriber = aai.Transcriber()
+
+
 
 
 def final_sentiment(transcript):
@@ -31,6 +35,7 @@ with st.sidebar.form("..."):
     audio_file = st.file_uploader("Upload an audio file", type=["wav","mp3"])
     # audio_file = ("./sample.mp3")
     if audio_file is not None:
+        st.audio(audio_file, format="audio/*")
         temp_dir = tempfile.mkdtemp()
         audio_file_name = "audio.wav"
         audio_file_path = os.path.join(temp_dir, audio_file_name)
@@ -41,26 +46,37 @@ with st.sidebar.form("..."):
     submit_button = st.form_submit_button(label="Transcribe")
 
 if submit_button and audio_file:
-    transcript = transcriber.transcribe(
+    transcript1 = transcriber.transcribe(
     audio_file_path,
     config=config1
     )
-    # for key in transcript.json_response:
-    #     print(key)
-    st.header("Transcript")
-    text=""
-    for utterance in transcript.utterances:
-    #     print(type(utterance))
-        text += f"Speaker {utterance.speaker}: {utterance.text}\n"
-    stx.scrollableTextbox(text, height=500)
-    transcript = transcriber.transcribe(
+    transcript3 = transcriber.transcribe(
     audio_file_path,
     config=config3
     )
-    satisfaction = final_sentiment(transcript)
+    # for key in transcript.json_response:
+        # print(key)
+    st.header("Transcript")
+    text=""
+    for utterance in transcript1.utterances:
+    #     print(type(utterance))
+        text += f"Speaker {utterance.speaker}: {utterance.text}\n"
+    stx.scrollableTextbox(text, height=500)
+    summary = co.summarize(
+        text = text,
+        length = 'medium',
+        format = 'paragraph',
+        model = 'command-nightly',
+        additional_command='what issue did customer face ? if any ? ',
+        temperature=0.3,
+    )
+    st.header("Summary")
+    st.write(summary.summary)
+    satisfaction = final_sentiment(transcript3)
     if satisfaction > 0 :
         st.success("The customer is satisfied 😀")
     elif satisfaction < 0 :
         st.error("The customer is not satisfied 😞")
         st.download_button('download transcript', text)
+        st.download_button('download summary', summary.summary)
     temp_audio_file.close()
